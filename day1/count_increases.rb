@@ -2,6 +2,10 @@
 # input = "tiny_input.txt"
 input = "input.txt"
 depth_readings = IO.readlines(input).map(&:to_i)
+# hey, we know this part sucks. We're:
+# - creating sliding windows of size 3
+# - summing them.
+depth_readings = depth_readings.zip(depth_readings[1..-1], depth_readings[2..-1])[0..-3].map(&:sum)
 
 increases_so_far = 0
 previous_depth = depth_readings[0] + 1
