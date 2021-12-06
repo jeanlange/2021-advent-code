@@ -18,10 +18,6 @@ main()
 
 
 def aim(): Unit = {
-  val fwd = "forward (\\d)".r
-  val up = "up (\\d)".r
-  val down = "down (\\d)".r
-
   //val InputFile = "tiny_input.txt"
   val InputFile = "input.txt"
 
@@ -31,12 +27,12 @@ def aim(): Unit = {
   var aim = 0
 
   lines.foreach {
-    case fwd(d) =>
+    case s"forward $d" =>
       horizontal = horizontal + d.toInt
       depth = depth + d.toInt * aim
-    case up(d) =>
+    case s"up $d" =>
       aim = aim - d.toInt
-    case down(d) =>
+    case s"down $d" =>
       aim = aim + d.toInt
   }
 
