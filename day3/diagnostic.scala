@@ -21,35 +21,18 @@ val gamma = BigInt(mostCommonBits, 2).toInt
 val epsilon = ~gamma & BigInt("1"*mostCommonBits.length, 2).toInt
 
 @tailrec
-def filterForMostCommon(index: Int, lines: Array[Array[Int]]): Int = {
-  //  println("Lines:\n  " + lines.map(_.mkString).mkString("\n  "))
+def filterForBits(lines: Array[Array[Int]], mostCommon: Boolean = true, index: Int = 0): Int = {
   if lines.length == 1 then
     BigInt(lines.head.mkString, 2).toInt
   else
     val column = lines.transpose.apply(index)
     // Look at indexed column, find most common bit (if equal, keep '1')
     val mostCommonBit = (column.sum.toDouble / column.length).round
-    // Filter input list starting with most common bit
-    val matches = lines.filter(_ (index) == mostCommonBit)
-    // Advance index pointer, repeat
-    filterForMostCommon(index + 1, matches)
+    val matches =
+      if (mostCommon) lines.filter((_ (index) == mostCommonBit))
+      else lines.filter(_ (index) != mostCommonBit)
+    filterForBits(matches, mostCommon, index + 1)
 }
-
-@tailrec
-def filterForLeastCommon(index: Int, lines: Array[Array[Int]]): Int = {
-  //  println("Lines:\n  " + lines.map(_.mkString).mkString("\n  "))
-  if lines.length == 1 then
-    BigInt(lines.head.mkString, 2).toInt
-  else
-    val column = lines.transpose.apply(index)
-    // Look at indexed column, find most common bit (if equal, keep '1')
-    val mostCommonBit = (column.sum.toDouble / column.length).round
-    // Filter input list starting with most common bit
-    val matches = lines.filterNot(_ (index) == mostCommonBit)
-    // Advance index pointer, repeat
-    filterForLeastCommon(index + 1, matches)
-}
-
 
 @main def run =
   println("Gamma: " + gamma)
@@ -57,8 +40,8 @@ def filterForLeastCommon(index: Int, lines: Array[Array[Int]]): Int = {
   println("Diagnostic code: " + gamma*epsilon)
 
   val nums = lines.map(_.toCharArray.map(_.toString.toInt)).toArray
-  val o2GeneratorRating = filterForMostCommon(0, nums)
-  val co2ScrubberRating = filterForLeastCommon(0, nums)
+  val o2GeneratorRating = filterForBits(nums)
+  val co2ScrubberRating = filterForBits(nums, mostCommon = false)
 
   println("O2 Generator Rating: " + o2GeneratorRating)
   println("C02 Scrubber Rating: " + co2ScrubberRating)
